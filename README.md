@@ -3,6 +3,8 @@
 
 <div align="center">
 
+> Note: this is a personal fork of the upstream project [christiaangoossens/hass-oidc-auth](https://github.com/christiaangoossens/hass-oidc-auth/) 
+
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
 [![Contributors][contributors-shield]][contributors-url]

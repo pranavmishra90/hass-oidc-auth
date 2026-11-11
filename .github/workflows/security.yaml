@@ -12,6 +12,7 @@ on:
 jobs:
   vulnerability-scan:
     runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'pranavmishra90' }}
     steps:
     - uses: actions/checkout@v7
     - name: "Set up Python"
