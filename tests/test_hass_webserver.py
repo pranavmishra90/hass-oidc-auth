@@ -18,7 +18,7 @@ from homeassistant.components.http import DOMAIN as HTTP_DOMAIN
 from homeassistant.components.http import StaticPathConfig
 from homeassistant.core import HomeAssistant
 from homeassistant.setup import async_setup_component
-from pytest_homeassistant_custom_component.typing import ClientSessionGenerator
+from pytest_homeassistant.typing import ClientSessionGenerator
 
 from custom_components.auth_oidc import DOMAIN
 from custom_components.auth_oidc.endpoints.injected_auth_page import (
@@ -572,6 +572,35 @@ async def test_callback_rejects_missing_code(
     )
     assert resp_missing_code.status == 400
     assert "Missing code or state parameter." in await resp_missing_code.text()
+
+
+@pytest.mark.asyncio
+async def test_callback_surfaces_provider_error(
+    hass: HomeAssistant, hass_client: ClientSessionGenerator
+):
+    """An OAuth error from the provider shows the provider error,
+    not the misleading missing code or state message."""
+    await setup(hass)
+
+    client = await hass_client()
+    redirect_uri = create_redirect_uri(client.make_url("/"), get_test_origin(client))
+    encoded = encode_redirect_uri(redirect_uri)
+    resp_welcome = await client.get(
+        f"/auth/oidc/welcome?redirect_uri={encoded}",
+        allow_redirects=False,
+    )
+    state = resp_welcome.cookies["auth_oidc_state"].value
+
+    resp_error = await client.get(
+        "/auth/oidc/callback?error=access_denied"
+        "&error_description=The+user+denied+access"
+        f"&state={state}",
+        allow_redirects=False,
+    )
+    text = await resp_error.text()
+    assert resp_error.status == 400
+    assert "The user denied access" in text
+    assert "Missing code or state parameter." not in text
 
 
 @pytest.mark.asyncio

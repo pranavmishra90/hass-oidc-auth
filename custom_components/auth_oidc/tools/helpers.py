@@ -80,6 +80,9 @@ async def template_response(
     template: str, parameters: dict | None = None
 ) -> web.Response:
     """Render a template and return it as an HTML response."""
+    if parameters is None:
+        parameters = {}
+
     parameters["help_url"] = REPO_ROOT_URL
     return html_response(
         await get_view(template, parameters),
@@ -89,11 +92,15 @@ async def template_response(
     )
 
 
-async def error_response(error_key: str, status: int = 400) -> web.Response:
+async def error_response(
+    error_key: str, status: int = 400, message: str | None = None
+) -> web.Response:
     """Render the shared error view with the translated message
-    for the given error key."""
+    for the given error key. An optional message overrides the
+    translated fallback."""
     translator = await async_get_translator(get_accept_language())
-    message = translator(f"error.messages.{error_key}")
+    translated = translator(f"error.messages.{error_key}")
+    message = message or translated
     return html_response(
         await get_view("error", {"error": message, "help_url": REPO_ROOT_URL}),
         status=status,
