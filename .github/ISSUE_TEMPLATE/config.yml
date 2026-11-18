@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Feature Request
-    url: https://github.com/christiaangoossens/hass-oidc-auth/discussions/categories/ideas
-    about: Please submit your feature request in the Ideas section of the Discussions.
-  - name: Question
-    url: https://github.com/christiaangoossens/hass-oidc-auth/discussions/categories/q-a
-    about: You can ask your question in the Q&A section of the Discussions.

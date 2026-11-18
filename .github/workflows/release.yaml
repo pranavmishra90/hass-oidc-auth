@@ -8,6 +8,7 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'pranavmishra90' }}
 
     permissions:
       contents: write
