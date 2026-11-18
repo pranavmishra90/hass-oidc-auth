@@ -44,6 +44,10 @@ class OIDCCallbackView(HomeAssistantView):
         # surface the provider error instead of the misleading missing code or
         # state message. The error view still offers the retry link.
         if params.get("error"):
+            if not state:
+                return await error_response("missing_code_or_state")
+            if state != state_id:
+                return await error_response("state_mismatch")
             error_description = params.get("error_description", params.get("error"))
             return await error_response(
                 "oidc_error", status=400, message=error_description
